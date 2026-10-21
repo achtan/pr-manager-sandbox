@@ -1,0 +1,2 @@
+[[pre-start]]
+deps = "bun install"
