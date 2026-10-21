@@ -19,7 +19,12 @@ git pull -q --ff-only
 
 openPr() {
   local branch=$1 title=$2
-  git push -q -u origin "$branch"
+  # Right after main moves, GitHub sometimes rejects a new branch with a spurious required-check error.
+  for attempt in 1 2 3; do
+    git push -q -u origin "$branch" && break
+    [ "$attempt" = 3 ] && return 1
+    sleep 5
+  done
   gh pr create --head "$branch" --base main --title "$title" --body "pr-manager scenario $stamp" --label "$label"
   git switch -q main
 }
